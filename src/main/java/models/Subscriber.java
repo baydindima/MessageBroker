@@ -11,7 +11,7 @@ public abstract class Subscriber {
         return id;
     }
 
-    public abstract void receiveMessage(Message message);
+    public abstract void receiveMessage(Topic topic, Message message);
 
     @Override
     public boolean equals(Object o) {

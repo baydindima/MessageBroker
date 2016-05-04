@@ -22,7 +22,7 @@ public class MessageBrokerTest {
     private final int[] sum2 = {0, 0, 0};
     private Subscriber subscriber0 = new Subscriber(0) {
         @Override
-        public void receiveMessage(Message message) {
+        public void receiveMessage(Topic topic, Message message) {
             TextMessage textMessage = (TextMessage) message;
             if ("0".equals(textMessage.getMessage())) {
                 ++sum1[0];
@@ -34,7 +34,7 @@ public class MessageBrokerTest {
 
     private Subscriber subscriber1 = new Subscriber(1) {
         @Override
-        public void receiveMessage(Message message) {
+        public void receiveMessage(Topic topic, Message message) {
             TextMessage textMessage = (TextMessage) message;
             if ("0".equals(textMessage.getMessage())) {
                 ++sum1[1];
@@ -46,7 +46,7 @@ public class MessageBrokerTest {
 
     private Subscriber subscriber2 = new Subscriber(1) {
         @Override
-        public void receiveMessage(Message message) {
+        public void receiveMessage(Topic topic, Message message) {
             TextMessage textMessage = (TextMessage) message;
             if ("0".equals(textMessage.getMessage())) {
                 ++sum1[2];

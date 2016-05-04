@@ -22,7 +22,7 @@ public class MessageBrokerImpl implements MessageBroker {
     @Override
     public void publish(Message message, Topic topic) {
         subscriberReadOperation(topic, subscribers -> {
-            subscribers.parallelStream().forEach(subscriber -> subscriber.receiveMessage(message));
+            subscribers.parallelStream().forEach(subscriber -> subscriber.receiveMessage(topic, message));
             return true;
         });
     }
