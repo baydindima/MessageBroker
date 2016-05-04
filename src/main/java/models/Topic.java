@@ -3,9 +3,9 @@ package models;
 
 public class Topic {
     private final String name;
-    private final int id;
+    private final long id;
 
-    public Topic(String name, int id) {
+    public Topic(String name, long id) {
         this.name = name;
         this.id = id;
     }
@@ -14,8 +14,16 @@ public class Topic {
         return name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Topic{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
     }
 
     @Override
@@ -26,12 +34,11 @@ public class Topic {
         Topic topic = (Topic) o;
 
         return id == topic.id;
+
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + id;
-        return result;
+        return (int) (id ^ (id >>> 32));
     }
 }

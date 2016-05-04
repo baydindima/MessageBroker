@@ -1,9 +1,31 @@
 package models;
 
-public interface Subscriber {
+public abstract class Subscriber {
+    private final long id;
 
-    int getId();
+    protected Subscriber(long id) {
+        this.id = id;
+    }
 
-    void receiveMessage(Message message);
+    public long getId() {
+        return id;
+    }
 
+    public abstract void receiveMessage(Message message);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Subscriber that = (Subscriber) o;
+
+        return id == that.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
 }
