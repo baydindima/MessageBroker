@@ -20,16 +20,20 @@ public class Topic {
 
     @Override
     public String toString() {
-        return "Topic{" +
-                "name='" + name + '\'' +
-                ", id=" + id +
-                '}';
+        return "Topic{"
+                + "name='" + name + '\''
+                + ", id=" + id
+                + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Topic topic = (Topic) o;
 
