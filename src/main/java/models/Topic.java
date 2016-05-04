@@ -1,27 +1,37 @@
 package models;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Topic {
     private final String name;
-    private List<Message> messages;
+    private final int id;
 
-    public Topic(String name) {
+    public Topic(String name, int id) {
         this.name = name;
-        messages = new LinkedList<>();
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<Message> getMessages() {
-        return Collections.unmodifiableList(messages);
+    public int getId() {
+        return id;
     }
 
-    public void addMessage(Message message) {
-        messages.add(message);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Topic topic = (Topic) o;
+
+        return id == topic.id;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + id;
+        return result;
     }
 }
