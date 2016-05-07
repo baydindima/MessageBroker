@@ -75,9 +75,9 @@ public class MessageBrokerImpl implements MessageBroker {
 
     private static class SubscribersHolder {
         private final Set<Subscriber> subscribers;
-        private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-        private ReadLock readLock = lock.readLock();
-        private WriteLock writeLock = lock.writeLock();
+        private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+        private final ReadLock readLock = lock.readLock();
+        private final WriteLock writeLock = lock.writeLock();
 
         SubscribersHolder(Set<Subscriber> subscribers) {
             this.subscribers = subscribers;

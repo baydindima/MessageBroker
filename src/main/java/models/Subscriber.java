@@ -14,7 +14,7 @@ public abstract class Subscriber {
     public abstract void receiveMessage(Topic topic, Message message);
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -29,7 +29,7 @@ public abstract class Subscriber {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return (int) (id ^ (id >>> 32));
     }
 }
