@@ -2,21 +2,27 @@ package com.message_broker.dao.impl;
 
 
 import com.message_broker.dao.AbstractDao;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 
 public class AbstractDaoImpl<K extends Serializable, T> implements AbstractDao<K, T> {
 
     private final Class<T> persistentClass;
 
     @Autowired
-    protected SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-    AbstractDaoImpl(Class<T> clazz){
-        this.persistentClass = clazz;
+    @SuppressWarnings("unchecked")
+    AbstractDaoImpl() {
+        persistentClass = (Class<T>)
+                ((ParameterizedType) getClass()
+                        .getGenericSuperclass())
+                        .getActualTypeArguments()[1];
     }
 
     protected Session getSession() {
@@ -38,6 +44,10 @@ public class AbstractDaoImpl<K extends Serializable, T> implements AbstractDao<K
 
     public void update(T object) {
         getSession().update(object);
+    }
+
+    protected Criteria createEntityCriteria() {
+        return getSession().createCriteria(persistentClass);
     }
 
 }

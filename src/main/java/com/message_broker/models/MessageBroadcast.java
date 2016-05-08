@@ -1,20 +1,26 @@
 package com.message_broker.models;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
+@DynamicUpdate
 @Table(name = "BROADCAST")
-public class MessageBroadcact extends BaseEntity {
+public class MessageBroadcast extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TOPIC_ID", nullable = false)
-    private final Topic topic;
+    private Topic topic;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
-    private final Message message;
+    private Message message;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BROADCAST_SUBSCRIBER", joinColumns = {
@@ -23,7 +29,10 @@ public class MessageBroadcact extends BaseEntity {
                     nullable = false, updatable = false)})
     private final Set<Subscriber> visitedSubscribers = ConcurrentHashMap.newKeySet();
 
-    public MessageBroadcact(Topic topic, Message message) {
+    private MessageBroadcast() {
+    }
+
+    public MessageBroadcast(Topic topic, Message message) {
         this.topic = topic;
         this.message = message;
     }

@@ -17,12 +17,12 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan({ "com.message_broker.config" })
+@ComponentScan({"com.message_broker"})
 @PropertySource(value = {"classpath:application.properties"})
 public class HibernateConfiguration {
 
     @Autowired
-    protected Environment environment;
+    private Environment environment;
 
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
@@ -49,6 +49,7 @@ public class HibernateConfiguration {
         properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
         properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
         properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.bytecode.use_reflection_optimizer", false);
         return properties;
     }
 

@@ -1,25 +1,30 @@
 package com.message_broker.models;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
+@DynamicUpdate
 @Table(name = "TOPIC")
 public class Topic extends BaseEntity {
 
     @Column(name = "NAME", unique = true, nullable = false)
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TOPIC_SUBSCRIBER", joinColumns = {
             @JoinColumn(name = "TOPIC_ID", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "SUBSCRIBER_ID",
                     nullable = false, updatable = false)})
     private final Set<Subscriber> subscribers = ConcurrentHashMap.newKeySet();
 
-    private Topic() {
+    public Topic() {
     }
 
     public Topic(String name) {
