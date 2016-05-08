@@ -1,35 +1,54 @@
 package com.message_broker.models;
 
-public abstract class Subscriber {
-    private final long id;
+import javax.persistence.*;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-    protected Subscriber(long id) {
-        this.id = id;
+@Entity
+@Table(name = "SUBSCRIBER")
+public abstract class Subscriber extends BaseEntity {
+    @Column(name = "NAME", unique = true, nullable = false)
+    private String name;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subscribers")
+    private final Set<Topic> topics = ConcurrentHashMap.newKeySet();
+
+    private Subscriber(){
     }
 
-    public long getId() {
-        return id;
+    public Subscriber(String name) {
+        this.name = name;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<Topic> getTopics() {
+        return topics;
     }
 
     public abstract void receiveMessage(Topic topic, Message message);
 
     @Override
-    public final boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Subscriber that = (Subscriber) o;
-
-        return id == that.id;
-
+        return Objects.equals(name, that.name);
     }
 
     @Override
-    public final int hashCode() {
-        return (int) (id ^ (id >>> 32));
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Subscriber{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

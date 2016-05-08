@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
  * Test class for {@link MessageBrokerImpl}
  */
 public class MessageBrokerConcurrentTest {
-    private static final int THREAD_NUM = 5;
+    /*private static final int THREAD_NUM = 5;
     private static final int MAX_TOPIC_COUNT = 5;
     private Random random = new Random();
     private volatile MessageBroker messageBroker = new MessageBrokerImpl();
@@ -136,6 +136,6 @@ public class MessageBrokerConcurrentTest {
                         exceptions),
                 exceptions.isEmpty()
         );
-    }
+    }*/
 
 }

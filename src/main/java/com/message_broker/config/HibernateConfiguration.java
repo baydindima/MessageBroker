@@ -18,11 +18,11 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan({ "com.message_broker.config" })
-@PropertySource(value = { "classpath:application.properties" })
+@PropertySource(value = {"classpath:application.properties"})
 public class HibernateConfiguration {
 
     @Autowired
-    private Environment environment;
+    protected Environment environment;
 
     @Bean
     public LocalSessionFactoryBean sessionFactory() {

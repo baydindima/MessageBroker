@@ -1,59 +1,56 @@
 package com.message_broker.models;
 
 import javax.persistence.*;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 @Table(name = "TOPIC")
-public class Topic {
+public class Topic extends BaseEntity {
+
+    @Column(name = "NAME", unique = true, nullable = false)
+    private String name;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "TOPIC_SUBSCRIBER", joinColumns = {
+            @JoinColumn(name = "TOPIC_ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "SUBSCRIBER_ID",
+                    nullable = false, updatable = false)})
+    private final Set<Subscriber> subscribers = ConcurrentHashMap.newKeySet();
 
     private Topic() {
     }
 
-    @Id
-    @Column(name = "ID", nullable = false)
-    private long id;
-
-    @Column(name = "NAME", nullable = false)
-    private String name;
-
-    public Topic(String name, long id) {
+    public Topic(String name) {
         this.name = name;
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public long getId() {
-        return id;
+    public Set<Subscriber> getSubscribers() {
+        return subscribers;
     }
 
     @Override
     public String toString() {
-        return "Topic{"
-                + "name='" + name + '\''
-                + ", id=" + id
-                + '}';
+        return "Topic{" +
+                "name='" + name + '\'' +
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Topic topic = (Topic) o;
-
-        return id == topic.id;
-
+        return Objects.equals(name, topic.name);
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        return Objects.hash(name);
     }
 }

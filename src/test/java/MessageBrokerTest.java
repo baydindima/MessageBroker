@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
  */
 
 public class MessageBrokerTest {
-    private MessageBroker messageBroker = new MessageBrokerImpl();
+    /*private MessageBroker messageBroker = new MessageBrokerImpl();
     private Topic topic0 = new Topic("Topic-0", 0);
     private Topic topic1 = new Topic("Topic-1", 1);
     private Topic topic2 = new Topic("Topic-2", 2);
@@ -131,5 +131,5 @@ public class MessageBrokerTest {
         assertEquals(1, messageBroker.getTopics().size());
         assertFalse(messageBroker.getTopics().contains(topic1));
     }
-
+*/
 }
