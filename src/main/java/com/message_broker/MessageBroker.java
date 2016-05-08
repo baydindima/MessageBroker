@@ -1,6 +1,8 @@
-import models.Message;
-import models.Subscriber;
-import models.Topic;
+package com.message_broker;
+
+import com.message_broker.models.Message;
+import com.message_broker.models.Subscriber;
+import com.message_broker.models.Topic;
 
 import java.util.Set;
 

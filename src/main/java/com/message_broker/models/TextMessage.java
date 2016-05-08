@@ -1,4 +1,4 @@
-package models;
+package com.message_broker.models;
 
 public class TextMessage implements Message {
     private final String text;

@@ -1,7 +1,9 @@
-import models.Message;
-import models.Subscriber;
-import models.TextMessage;
-import models.Topic;
+import com.message_broker.MessageBroker;
+import com.message_broker.MessageBrokerImpl;
+import com.message_broker.models.Message;
+import com.message_broker.models.Subscriber;
+import com.message_broker.models.TextMessage;
+import com.message_broker.models.Topic;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

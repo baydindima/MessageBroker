@@ -1,4 +1,4 @@
-package models;
+package com.message_broker.models;
 
 public abstract class Subscriber {
     private final long id;

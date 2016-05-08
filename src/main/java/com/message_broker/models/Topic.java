@@ -1,9 +1,20 @@
-package models;
+package com.message_broker.models;
 
+import javax.persistence.*;
 
+@Entity
+@Table(name = "TOPIC")
 public class Topic {
-    private final String name;
-    private final long id;
+
+    private Topic() {
+    }
+
+    @Id
+    @Column(name = "ID", nullable = false)
+    private long id;
+
+    @Column(name = "NAME", nullable = false)
+    private String name;
 
     public Topic(String name, long id) {
         this.name = name;
