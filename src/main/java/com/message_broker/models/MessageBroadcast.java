@@ -22,7 +22,7 @@ public class MessageBroadcast extends BaseEntity {
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
     private Message message;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "BROADCAST_SUBSCRIBER", joinColumns = {
             @JoinColumn(name = "BROADCAST_ID", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "SUBSCRIBER_ID",

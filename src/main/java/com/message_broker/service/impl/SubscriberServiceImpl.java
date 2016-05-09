@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service("subscriberService")
 @Transactional
 public class SubscriberServiceImpl implements SubscriberService {
@@ -33,6 +36,11 @@ public class SubscriberServiceImpl implements SubscriberService {
     @Override
     public void delete(Subscriber subscriber) {
         subscriberDao.delete(subscriber);
+    }
+
+    @Override
+    public Set<Subscriber> getAllSubscribers() {
+        return new HashSet<>(subscriberDao.getAll());
     }
 
     @Override

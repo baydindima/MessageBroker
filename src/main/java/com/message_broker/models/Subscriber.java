@@ -38,8 +38,12 @@ public class Subscriber extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Subscriber that = (Subscriber) o;
         return Objects.equals(name, that.name);
     }
@@ -51,8 +55,6 @@ public class Subscriber extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Subscriber{" +
-                "name='" + name + '\'' +
-                '}';
+        return String.format("Subscriber{name='%s'}", name);
     }
 }

@@ -6,12 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import java.util.concurrent.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -20,18 +15,23 @@ import static org.junit.Assert.assertTrue;
  */
 public class MessageBrokerConcurrentTest extends CommonMessageBrokerUtils {
     private static final int THREAD_NUM = 5;
+    private static final int MAX_SEC_TO_WAIT = 300;
 
 
     @Test
     public void simpleConcurrentTest() {
         final int subscribePerThread = 10;
+        final BlockingQueue<Subscriber> subscribers = new LinkedBlockingQueue<>();
+        final BlockingQueue<Topic> topics = new LinkedBlockingQueue<>();
 
         List<Runnable> runnables = new ArrayList<>();
         for (int i = 0; i < THREAD_NUM; i++) {
             runnables.add(() -> {
                         Topic topic = getTopicFactory().newInstance();
+                        topics.add(topic);
                         for (int j = 0; j < subscribePerThread; j++) {
                             Subscriber subscriber = getSubscriberFactory().newInstance();
+                            subscribers.add(subscriber);
                             getMessageBroker().subscribe(subscriber, topic);
                             Thread.yield();
                         }
@@ -39,31 +39,26 @@ public class MessageBrokerConcurrentTest extends CommonMessageBrokerUtils {
             );
         }
         try {
-            assertConcurrent("Simple subscribe", runnables, 300);
+            assertConcurrent("Simple subscribe", runnables, MAX_SEC_TO_WAIT);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
-        assertEquals(
-                subscribePerThread * THREAD_NUM,
-                getMessageBroker().getSubscribers().size()
+        assertTrue(
+                subscribePerThread * THREAD_NUM <= getMessageBroker().getSubscribers().size()
         );
 
-        assertEquals(
-                THREAD_NUM,
-                getMessageBroker().getTopics().size()
+        assertTrue(
+                THREAD_NUM <= getMessageBroker().getTopics().size()
         );
-
-
-        Topic[] topics = getMessageBroker().getTopics().toArray(new Topic[0]);
-        AtomicInteger threadNum = new AtomicInteger();
 
         runnables.clear();
 
         final int messagePerThread = 10;
         for (int i = 0; i < THREAD_NUM; i++) {
             runnables.add(() -> {
-                        Topic topic = topics[threadNum.getAndIncrement()];
+                        Topic topic = topics.poll();
                         for (int j = 0; j < messagePerThread; j++) {
                             getMessageBroker().publish(getMessageFactory().newInstance(), topic);
                             Thread.yield();
@@ -73,16 +68,37 @@ public class MessageBrokerConcurrentTest extends CommonMessageBrokerUtils {
         }
 
         try {
-            assertConcurrent("Simple publish ", runnables, 300);
+            assertConcurrent("Simple publish ", runnables, MAX_SEC_TO_WAIT);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
-        for (Subscriber subscriber : getMessageBroker().getSubscribers()) {
+        for (Subscriber subscriber : subscribers) {
             assertEquals(
                     messagePerThread,
                     subscriber.getSavedMessages().size()
             );
+        }
+    }
+
+    @Test
+    public void multiSubscribe() {
+        final String text = "multiSubscribe-Subscriber";
+        final Topic topic = getTopicFactory().newInstance();
+
+
+        List<Runnable> runnables = new ArrayList<>();
+        for (int i = 0; i < THREAD_NUM; i++) {
+            runnables.add(() -> getMessageBroker().subscribe(new Subscriber(text), topic)
+            );
+        }
+
+        try {
+            assertConcurrent("Multi subscribe", runnables, MAX_SEC_TO_WAIT);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

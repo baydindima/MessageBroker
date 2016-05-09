@@ -17,7 +17,7 @@ public class Topic extends BaseEntity {
     @Column(name = "NAME", unique = true, nullable = false)
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "TOPIC_SUBSCRIBER", joinColumns = {
             @JoinColumn(name = "TOPIC_ID", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "SUBSCRIBER_ID",
@@ -41,15 +41,17 @@ public class Topic extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Topic{" +
-                "name='" + name + '\'' +
-                '}';
+        return String.format("Topic{name='%s'}", name);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Topic topic = (Topic) o;
         return Objects.equals(name, topic.name);
     }

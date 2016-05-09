@@ -1,6 +1,7 @@
 package com.message_broker.dao;
 
 import java.io.Serializable;
+import java.util.List;
 
 public interface AbstractDao<K extends Serializable, T> {
 
@@ -13,4 +14,7 @@ public interface AbstractDao<K extends Serializable, T> {
     void update(T object);
 
     void merge(T object);
+
+    @SuppressWarnings("unchecked")
+    List<T> getAll();
 }

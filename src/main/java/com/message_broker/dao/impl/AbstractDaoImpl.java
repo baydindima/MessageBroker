@@ -1,6 +1,5 @@
 package com.message_broker.dao.impl;
 
-
 import com.message_broker.dao.AbstractDao;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.List;
 
 public class AbstractDaoImpl<K extends Serializable, T> implements AbstractDao<K, T> {
 
@@ -53,6 +53,13 @@ public class AbstractDaoImpl<K extends Serializable, T> implements AbstractDao<K
     @Override
     public void merge(T object) {
         getSession().merge(object);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<T> getAll() {
+        Criteria criteria = createEntityCriteria();
+        return (List<T>) criteria.list();
     }
 
     protected Criteria createEntityCriteria() {

@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service("broadcastService")
 @Transactional
 public class BroadcastServiceImpl implements BroadcastService {
@@ -37,6 +40,15 @@ public class BroadcastServiceImpl implements BroadcastService {
     @Override
     public void delete(MessageBroadcast object) {
         broadcastDao.delete(object);
+    }
+
+    @Override
+    public Set<MessageBroadcast> getAllBroadcasts() {
+        Set<MessageBroadcast> messageBroadcasts = new HashSet<>(broadcastDao.getAll());
+        for (MessageBroadcast messageBroadcast : messageBroadcasts) {
+            Hibernate.initialize(messageBroadcast.getTopic());
+        }
+        return messageBroadcasts;
     }
 
     @Override

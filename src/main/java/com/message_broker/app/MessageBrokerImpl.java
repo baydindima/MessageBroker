@@ -43,18 +43,45 @@ public class MessageBrokerImpl implements MessageBroker {
     }
 
     @Override
+    public void refresh(
+            Set<Topic> topics,
+            Set<Subscriber> subscribers,
+            Set<MessageBroadcast> broadcasts
+    ) {
+        for (Topic topic : topics) {
+            this.topics.put(topic, new TopicHolder(topic));
+            for (Subscriber subscriber : topic.getSubscribers()) {
+                this.subscribers.put(subscriber, subscriber);
+            }
+        }
+
+        for (MessageBroadcast broadcast : broadcasts) {
+            Topic topic = this.topics.get(broadcast.getTopic()).topic;
+            topic.getSubscribers().forEach(subscriber -> {
+                        if (!broadcast.getVisitedSubscribers().contains(subscriber)) {
+                            sendMessage(topic, broadcast, subscriber);
+                        }
+                    }
+            );
+            broadcastDao.delete(broadcast);
+        }
+    }
+
+    @Override
     public void publish(Message message, Topic topic) {
         final MessageBroadcast broadcast = new MessageBroadcast(getTopicHolder(topic).topic, message);
         broadcastDao.persist(broadcast);
         subscriberReadOperation(topic, topic1 -> {
-            topic1.getSubscribers().stream().forEach(subscriber -> {
-                subscriber.receiveMessage(topic1, message);
-                broadcast.getVisitedSubscribers().add(subscriber);
-                broadcastDao.update(broadcast);
-            });
+            topic1.getSubscribers().stream().forEach(subscriber -> sendMessage(topic, broadcast, subscriber));
             return true;
         });
         broadcastDao.delete(broadcast);
+    }
+
+    private void sendMessage(Topic topic, MessageBroadcast broadcast, Subscriber subscriber) {
+        subscriber.receiveMessage(topic, broadcast.getMessage());
+        broadcast.getVisitedSubscribers().add(subscriber);
+        broadcastDao.update(broadcast);
     }
 
     @Override
@@ -132,7 +159,7 @@ public class MessageBrokerImpl implements MessageBroker {
         );
     }
 
-    private static class TopicHolder {
+    private static final class TopicHolder {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
         private final Lock readLock = lock.readLock();
         private final Lock writeLock = lock.writeLock();
