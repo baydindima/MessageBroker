@@ -8,5 +8,9 @@ public interface TopicService  extends AbstractService<Long, Topic>  {
 
     Topic getTopic(Long id);
 
+    Topic findByName(String name);
+
+    void merge(Topic topic);
+
     Set<Topic> getAllTopics();
 }

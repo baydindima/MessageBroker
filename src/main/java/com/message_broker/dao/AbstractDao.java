@@ -12,4 +12,5 @@ public interface AbstractDao<K extends Serializable, T> {
 
     void update(T object);
 
+    void merge(T object);
 }

@@ -1,17 +1,6 @@
-import com.message_broker.MessageBroker;
-import com.message_broker.MessageBrokerImpl;
-import com.message_broker.models.Message;
-import com.message_broker.models.Subscriber;
-import com.message_broker.models.Topic;
-import org.junit.Test;
+package com.message_broker.app;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
+import com.message_broker.app.MessageBrokerImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

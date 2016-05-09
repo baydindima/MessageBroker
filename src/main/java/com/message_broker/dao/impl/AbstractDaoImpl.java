@@ -30,20 +30,29 @@ public class AbstractDaoImpl<K extends Serializable, T> implements AbstractDao<K
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public T getByKey(K key) {
         return (T) getSession().get(persistentClass, key);
     }
 
+    @Override
     public void delete(T object) {
         getSession().delete(object);
     }
 
+    @Override
     public void persist(T object) {
         getSession().persist(object);
     }
 
+    @Override
     public void update(T object) {
         getSession().update(object);
+    }
+
+    @Override
+    public void merge(T object) {
+        getSession().merge(object);
     }
 
     protected Criteria createEntityCriteria() {

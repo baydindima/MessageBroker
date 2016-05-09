@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TopicDao extends AbstractDao<Long, Topic> {
     List<Topic> getAllTopics();
+
+    Topic findByName(String name);
 }

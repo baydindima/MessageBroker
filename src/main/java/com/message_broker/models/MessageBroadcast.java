@@ -16,7 +16,7 @@ public class MessageBroadcast extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TOPIC_ID", nullable = false)
-    private Topic topic;
+    private volatile Topic topic;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
@@ -39,6 +39,10 @@ public class MessageBroadcast extends BaseEntity {
 
     public Topic getTopic() {
         return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 
     public Message getMessage() {

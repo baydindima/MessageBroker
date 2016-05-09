@@ -20,13 +20,18 @@ public class BroadcastServiceImpl implements BroadcastService {
     }
 
     @Override
-    public void save(MessageBroadcast object) {
-        broadcastDao.persist(object);
+    public void save(MessageBroadcast broadcast) {
+        broadcastDao.persist(broadcast);
     }
 
     @Override
     public void update(MessageBroadcast object) {
         broadcastDao.update(object);
+    }
+
+    @Override
+    public void merge(MessageBroadcast broadcast) {
+        broadcastDao.merge(broadcast);
     }
 
     @Override

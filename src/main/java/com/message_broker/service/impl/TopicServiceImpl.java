@@ -32,6 +32,11 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    public Topic findByName(String name) {
+        return topicDao.findByName(name);
+    }
+
+    @Override
     public void save(Topic topic) {
         topicDao.persist(topic);
     }
@@ -44,6 +49,11 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public void delete(Topic topic) {
         topicDao.delete(topic);
+    }
+
+    @Override
+    public void merge(Topic topic) {
+        topicDao.merge(topic);
     }
 
     @Override

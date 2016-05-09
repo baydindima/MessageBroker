@@ -1,4 +1,4 @@
-package com.message_broker;
+package com.message_broker.app;
 
 import com.message_broker.models.Message;
 import com.message_broker.models.Subscriber;
@@ -18,4 +18,5 @@ public interface MessageBroker {
 
     Set<Topic> getTopics();
 
+    Set<Subscriber> getSubscribers();
 }

@@ -4,6 +4,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Entity
 @DynamicUpdate
@@ -12,11 +14,8 @@ public class Subscriber extends BaseEntity {
     @Column(name = "NAME", unique = true, nullable = false)
     private String name;
 
-    @ManyToMany()
-    @JoinTable(name = "SUBSCRIBER_MESSAGE",
-            joinColumns = @JoinColumn(name = "SUBSCRIBER_ID", nullable = false, updatable = false),
-            inverseJoinColumns = @JoinColumn(name = "MESSAGE_ID", nullable = false, updatable = false))
-    private final List<Message> savedMessages = new LinkedList<>();
+    @Transient
+    private final BlockingQueue<Message> savedMessages = new LinkedBlockingQueue<>();
 
     private Subscriber() {
     }
@@ -29,32 +28,12 @@ public class Subscriber extends BaseEntity {
         return name;
     }
 
-    public List<Message> getSavedMessages() {
+    public BlockingQueue<Message> getSavedMessages() {
         return savedMessages;
     }
 
-    public boolean isEmpty() {
-        synchronized (savedMessages) {
-            return savedMessages.isEmpty();
-        }
-    }
-
-    public Message getMessage() {
-        synchronized (savedMessages) {
-            if (!isEmpty()) {
-                Message message = savedMessages.get(0);
-                savedMessages.remove(0);
-                return message;
-            }
-            return null;
-        }
-    }
-
     public void receiveMessage(Topic topic, Message message) {
-        synchronized (savedMessages) {
-            savedMessages.add(message);
-            savedMessages.notifyAll();
-        }
+        savedMessages.add(message);
     }
 
     @Override

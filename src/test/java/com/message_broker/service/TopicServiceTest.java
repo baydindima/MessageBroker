@@ -82,6 +82,12 @@ public class TopicServiceTest extends CommonServiceUtilsTest {
 
         topic = getTopicService().getTopic(topic.getId());
         assertEquals(1, topic.getSubscribers().size());
+
+        topic.getSubscribers().remove(subscriber);
+        getTopicService().update(topic);
+
+        topic = getTopicService().getTopic(topic.getId());
+        assertEquals(0, topic.getSubscribers().size());
     }
 
 }
