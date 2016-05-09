@@ -47,11 +47,10 @@ public final class MessageBrokerApp {
         subscriberService = applicationContext.getBean(SubscriberService.class);
 
         Set<Topic> allTopics = topicService.getAllTopics();
-        Set<Subscriber> allSubscriber = subscriberService.getAllSubscribers();
         Set<MessageBroadcast> allBroadcasts = broadcastService.getAllBroadcasts();
 
         messageBroker = applicationContext.getBean(MessageBroker.class);
-        messageBroker.refresh(allTopics, allSubscriber, allBroadcasts);
+        messageBroker.refresh(allTopics, allBroadcasts);
     }
 
 }

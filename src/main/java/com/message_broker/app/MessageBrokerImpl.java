@@ -45,7 +45,6 @@ public class MessageBrokerImpl implements MessageBroker {
     @Override
     public void refresh(
             Set<Topic> topics,
-            Set<Subscriber> subscribers,
             Set<MessageBroadcast> broadcasts
     ) {
         for (Topic topic : topics) {

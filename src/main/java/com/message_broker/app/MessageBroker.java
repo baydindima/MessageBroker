@@ -11,7 +11,6 @@ public interface MessageBroker {
 
     void refresh(
             Set<Topic> topics,
-            Set<Subscriber> subscribers,
             Set<MessageBroadcast> broadcasts
     );
 
