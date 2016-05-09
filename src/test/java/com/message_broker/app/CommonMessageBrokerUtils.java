@@ -6,6 +6,7 @@ import com.message_broker.models.Subscriber;
 import com.message_broker.models.Topic;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -20,6 +21,9 @@ import static org.junit.Assert.assertEquals;
 @TestPropertySource(value = {"classpath:application.test.properties"})
 public class CommonMessageBrokerUtils {
 
+    @Autowired
+    private MessageBroker messageBroker;
+
     public abstract static class Factory<T> {
         private static AtomicInteger count = new AtomicInteger();
 
@@ -33,27 +37,31 @@ public class CommonMessageBrokerUtils {
     private final Factory<Topic> topicFactory = new Factory<Topic>() {
         @Override
         protected Topic newObject(int i) {
-            return new Topic("Topic" + i);
+            return new Topic("Broker-Topic" + i);
         }
     };
 
     private final Factory<Subscriber> subscriberFactory = new Factory<Subscriber>() {
         @Override
         protected Subscriber newObject(int i) {
-            return new Subscriber("Subscriber" + i);
+            return new Subscriber("Broker-Subscriber" + i);
         }
     };
 
     private final Factory<Message> messageFactory = new Factory<Message>() {
         @Override
         protected Message newObject(int i) {
-            return new Message("Message" + i);
+            return new Message("Broker-Message" + i);
         }
     };
 
     @Test
     public void simpleTest() {
         assertEquals(1, 1);
+    }
+
+    public MessageBroker getMessageBroker() {
+        return messageBroker;
     }
 
     public Factory<Topic> getTopicFactory() {

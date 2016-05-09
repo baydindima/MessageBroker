@@ -50,7 +50,7 @@ public class CommonServiceUtilsTest {
     private final Factory<Topic> topicFactory = new Factory<Topic>() {
         @Override
         protected Topic newObject(int i) {
-            Topic topic = new Topic("Topic" + i);
+            Topic topic = new Topic("Service-Topic" + i);
             topicService.save(topic);
             return topic;
         }
@@ -59,7 +59,7 @@ public class CommonServiceUtilsTest {
     private final Factory<Subscriber> subscriberFactory = new Factory<Subscriber>() {
         @Override
         protected Subscriber newObject(int i) {
-            Subscriber subscriber = new Subscriber("Subscriber" + i);
+            Subscriber subscriber = new Subscriber("Service-Subscriber" + i);
             subscriberService.save(subscriber);
             return subscriber;
         }
@@ -68,7 +68,7 @@ public class CommonServiceUtilsTest {
     private final Factory<Message> messageFactory = new Factory<Message>() {
         @Override
         protected Message newObject(int i) {
-            Message message = new Message("Message" + i);
+            Message message = new Message("Service-Message" + i);
             messageService.save(message);
             return message;
         }

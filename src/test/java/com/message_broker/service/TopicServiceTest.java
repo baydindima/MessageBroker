@@ -15,7 +15,7 @@ public class TopicServiceTest extends CommonServiceUtilsTest {
     @Test
     public void saveGetTest() {
         final String topicName = "TOPIC_NAME";
-        final int subscriberCount = 50;
+        final int subscriberCount = 10;
 
         Topic topic = new Topic(topicName);
         for (int i = 0; i < subscriberCount; i++) {

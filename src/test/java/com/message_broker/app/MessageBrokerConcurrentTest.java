@@ -1,6 +1,16 @@
 package com.message_broker.app;
 
-import com.message_broker.app.MessageBrokerImpl;
+import com.message_broker.models.Subscriber;
+import com.message_broker.models.Topic;
+import org.junit.Test;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,57 +18,54 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test class for {@link MessageBrokerImpl}
  */
-public class MessageBrokerConcurrentTest {
-    /*private static final int THREAD_NUM = 5;
-    private static final int MAX_TOPIC_COUNT = 5;
-    private Random random = new Random();
-    private volatile MessageBroker messageBroker = new MessageBrokerImpl();
-    private volatile AtomicIntegerArray messageCount = new AtomicIntegerArray(MAX_TOPIC_COUNT);
-    private volatile AtomicIntegerArray subscriberCount = new AtomicIntegerArray(MAX_TOPIC_COUNT);
-    private volatile AtomicInteger subscriberId = new AtomicInteger();
-    private volatile AtomicInteger totalMessageCount = new AtomicInteger();
+public class MessageBrokerConcurrentTest extends CommonMessageBrokerUtils {
+    private static final int THREAD_NUM = 5;
+
 
     @Test
     public void simpleConcurrentTest() {
+        final int subscribePerThread = 10;
+
         List<Runnable> runnables = new ArrayList<>();
         for (int i = 0; i < THREAD_NUM; i++) {
             runnables.add(() -> {
-                        for (int j = 0; j < 10; j++) {
-                            Subscriber subscriber = new Subscriber(subscriberId.getAndIncrement()) {
-                                @Override
-                                public void receiveMessage(Topic topic, Message message) {
-                                    messageCount.incrementAndGet((int) topic.getId());
-                                }
-                            };
-                            int topicId = random.nextInt(MAX_TOPIC_COUNT);
-                            messageBroker.subscribe(subscriber, new Topic("Text", topicId));
-                            subscriberCount.incrementAndGet(topicId);
+                        Topic topic = getTopicFactory().newInstance();
+                        for (int j = 0; j < subscribePerThread; j++) {
+                            Subscriber subscriber = getSubscriberFactory().newInstance();
+                            getMessageBroker().subscribe(subscriber, topic);
                             Thread.yield();
                         }
                     }
             );
         }
         try {
-            assertConcurrent("Simple subscribe", runnables, 1);
+            assertConcurrent("Simple subscribe", runnables, 300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        int sum = 0;
-        for (int i = 0; i < MAX_TOPIC_COUNT; i++) {
-            sum += subscriberCount.get(i);
-        }
-        assertEquals(10 * THREAD_NUM, sum);
+
+        assertEquals(
+                subscribePerThread * THREAD_NUM,
+                getMessageBroker().getSubscribers().size()
+        );
+
+        assertEquals(
+                THREAD_NUM,
+                getMessageBroker().getTopics().size()
+        );
+
+
+        Topic[] topics = getMessageBroker().getTopics().toArray(new Topic[0]);
+        AtomicInteger threadNum = new AtomicInteger();
 
         runnables.clear();
 
+        final int messagePerThread = 10;
         for (int i = 0; i < THREAD_NUM; i++) {
             runnables.add(() -> {
-                        for (int j = 0; j < 10; j++) {
-                            int topicId = random.nextInt(MAX_TOPIC_COUNT);
-                            totalMessageCount.addAndGet(
-                                    subscriberCount.get(topicId)
-                            );
-                            messageBroker.publish(new TextMessage(""), new Topic("Text", topicId));
+                        Topic topic = topics[threadNum.getAndIncrement()];
+                        for (int j = 0; j < messagePerThread; j++) {
+                            getMessageBroker().publish(getMessageFactory().newInstance(), topic);
                             Thread.yield();
                         }
                     }
@@ -66,15 +73,17 @@ public class MessageBrokerConcurrentTest {
         }
 
         try {
-            assertConcurrent("Simple publish ", runnables, 1);
+            assertConcurrent("Simple publish ", runnables, 300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        sum = 0;
-        for (int i = 0; i < MAX_TOPIC_COUNT; i++) {
-            sum += messageCount.get(i);
+
+        for (Subscriber subscriber : getMessageBroker().getSubscribers()) {
+            assertEquals(
+                    messagePerThread,
+                    subscriber.getSavedMessages().size()
+            );
         }
-        assertEquals(totalMessageCount.get(), sum);
     }
 
     private static void assertConcurrent(
@@ -124,6 +133,6 @@ public class MessageBrokerConcurrentTest {
                         exceptions),
                 exceptions.isEmpty()
         );
-    }*/
+    }
 
 }

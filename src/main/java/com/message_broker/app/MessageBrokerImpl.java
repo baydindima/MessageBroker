@@ -1,39 +1,38 @@
 package com.message_broker.app;
 
+import com.message_broker.dao.BroadcastDao;
+import com.message_broker.dao.SubscriberDao;
+import com.message_broker.dao.TopicDao;
 import com.message_broker.models.Message;
 import com.message_broker.models.MessageBroadcast;
 import com.message_broker.models.Subscriber;
 import com.message_broker.models.Topic;
-import com.message_broker.service.BroadcastService;
-import com.message_broker.service.MessageService;
-import com.message_broker.service.SubscriberService;
-import com.message_broker.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.function.Function;
 
 /**
  * Implementation of {@link MessageBroker}
  */
 @Component
+@Transactional
 public class MessageBrokerImpl implements MessageBroker {
 
     @Autowired
-    private TopicService topicService;
+    private TopicDao topicDao;
 
     @Autowired
-    private SubscriberService subscriberService;
+    private SubscriberDao subscriberDao;
 
     @Autowired
-    private BroadcastService broadcastService;
+    private BroadcastDao broadcastDao;
 
     private final ConcurrentHashMap<Topic, TopicHolder> topics;
     private final ConcurrentHashMap<Subscriber, Subscriber> subscribers;
@@ -46,17 +45,16 @@ public class MessageBrokerImpl implements MessageBroker {
     @Override
     public void publish(Message message, Topic topic) {
         final MessageBroadcast broadcast = new MessageBroadcast(getTopicHolder(topic).topic, message);
-        broadcastService.save(broadcast);
+        broadcastDao.persist(broadcast);
         subscriberReadOperation(topic, topic1 -> {
-            topic1.getSubscribers().parallelStream().forEach(subscriber -> {
+            topic1.getSubscribers().stream().forEach(subscriber -> {
                 subscriber.receiveMessage(topic1, message);
                 broadcast.getVisitedSubscribers().add(subscriber);
-                broadcastService.merge(broadcast);
+                broadcastDao.update(broadcast);
             });
             return true;
         });
-//        broadcastService.update(broadcast);
-//        broadcastService.delete(broadcast);
+        broadcastDao.delete(broadcast);
     }
 
     @Override
@@ -64,7 +62,7 @@ public class MessageBrokerImpl implements MessageBroker {
         Subscriber subscriber1 = getSubscriber(subscriber);
         return subscriberWriteOperation(topic, topic1 -> {
             if (topic1.getSubscribers().add(subscriber1)) {
-                topicService.update(topic1);
+                topicDao.update(topic1);
                 return true;
             }
             return false;
@@ -76,7 +74,7 @@ public class MessageBrokerImpl implements MessageBroker {
         Subscriber subscriber1 = getSubscriber(subscriber);
         return subscriberWriteOperation(topic, topic1 -> {
             if (topic1.getSubscribers().remove(subscriber1)) {
-                topicService.merge(topic1);
+                topicDao.update(topic1);
                 return true;
             }
             return false;
@@ -120,7 +118,7 @@ public class MessageBrokerImpl implements MessageBroker {
 
     private Subscriber getSubscriber(Subscriber subscriber) {
         return subscribers.computeIfAbsent(subscriber, subscriber1 -> {
-            subscriberService.save(subscriber1);
+            subscriberDao.persist(subscriber1);
             return subscriber1;
         });
     }
@@ -128,7 +126,7 @@ public class MessageBrokerImpl implements MessageBroker {
     private TopicHolder getTopicHolder(Topic topic) {
         return topics.computeIfAbsent(topic,
                 topic1 -> {
-                    topicService.save(topic1);
+                    topicDao.persist(topic1);
                     return new TopicHolder(topic1);
                 }
         );
